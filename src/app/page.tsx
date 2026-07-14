@@ -12,6 +12,7 @@ import {
 } from "@/components/HackerChrome";
 import { CorridorStage } from "@/components/CorridorStage";
 import { PortraitSprite } from "@/components/PortraitSprite";
+import { BootGlitch } from "@/components/BootGlitch";
 import { DataRow, Reveal, SectionLabel } from "@/components/ui";
 import { motion, useScroll, useSpring } from "framer-motion";
 
@@ -57,7 +58,8 @@ function FooterX() {
 export default function HomePage() {
   return (
     <div className="relative min-h-dvh backroom-wall force-motion">
-      <ScrollProgress />
+          <BootGlitch />
+          <ScrollProgress />
       <BiohazardWarningBar />
       <SideTerminalCrawl />
       <div className="phantom-soft">
