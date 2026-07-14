@@ -28,17 +28,17 @@ export const board = [
   {
     name: "Dr. R. Yosi Aprian Sari, M.Si.",
     role: "Ketua Penguji",
-    code: "ENT-01",
+    code: "FSK-01",
   },
   {
     name: "Dr. Laila Katriani, S.Si., M.Si.",
     role: "Sekretaris Penguji",
-    code: "ENT-02",
+    code: "FSK-02",
   },
   {
     name: "Denny Darmawan, S.Si., M.Sc.",
     role: "Penguji Utama",
-    code: "ENT-03",
+    code: "FSK-03",
   },
 ] as const;
 

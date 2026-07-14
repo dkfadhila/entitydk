@@ -83,9 +83,6 @@ export default function HomePage() {
               >
                 <AnnoyText as="span" text={brand.code} className="inline-block break-code" rate={200} />
               </h1>
-              <p className="mt-2 font-mono text-xs uppercase tracking-[0.16em] text-fluorescent sm:text-sm sm:tracking-[0.2em]">
-                Undangan {brand.human}
-              </p>
               <p className="mt-1 break-code font-mono text-[10px] text-fog/70">
                 codename zone · {brand.zone}
               </p>
@@ -124,9 +121,8 @@ export default function HomePage() {
               <br />
               <br />
               Anomali{" "}
-              <span className="break-code text-backroom-hot">{brand.code}</span> (
-              {brand.human.toLowerCase()}) dibuka di zona liminal{" "}
-              <span className="text-paper">{event.place}</span>. Target:{" "}
+              <span className="break-code text-backroom-hot">{brand.code}</span> dibuka di
+              zona liminal <span className="text-paper">{event.place}</span>. Target:{" "}
               <span className="text-bio">{subject.name}</span>. Kehadiran dicatat sebagai
               observer clearance. Dindingnya sama. Hum-nya juga.
             </p>

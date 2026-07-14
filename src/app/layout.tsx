@@ -31,7 +31,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://rinejourney.xyz"),
-  title: "S1D4NG.5KR1P51.404 · Undangan Sidang — Decka Fadhila Tirta",
+  title: "S1D4NG.5KR1P51.404",
   description:
     "Para Entitas: S1D4NG.5KR1P51.404 recovered dari BACKROOM://PENDAPA_FMIPA. Senin 20 Juli 2026 · 15:00 WIB. Quarantine protocol aktif.",
   icons: {
@@ -39,9 +39,9 @@ export const metadata: Metadata = {
     apple: [{ url: "/apple-icon.svg" }],
   },
   openGraph: {
-    title: "S1D4NG.5KR1P51.404 · Undangan Sidang — Decka Fadhila Tirta",
+    title: "S1D4NG.5KR1P51.404",
     description:
-      "Zona liminal sidang skripsi. Board of Entities online. Subject: Decka Fadhila Tirta.",
+      "Zona liminal entity clearance. Board of Entities online. Subject: Decka Fadhila Tirta.",
     type: "website",
     locale: "id_ID",
     siteName: "S1D4NG.5KR1P51.404",
@@ -50,8 +50,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@tirtavex",
     creator: "@tirtavex",
-    title: "S1D4NG.5KR1P51.404 · Undangan Sidang",
-    description: "Para Entitas — clearance sidang 20 Juli 2026 · Pendapa FMIPA Aja",
+    title: "S1D4NG.5KR1P51.404",
+    description: "Para Entitas — clearance 20 Juli 2026 · Pendapa FMIPA Aja",
   },
   appleWebApp: {
     capable: true,
