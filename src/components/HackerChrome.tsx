@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { alertBanners, brand, hackerLines, phantomLabels } from "@/lib/data";
+import { alertBanners, brand, event, hackerLines, phantomLabels } from "@/lib/data";
 
 const GLITCH_CHARS = "█▓▒░ entitas404/\\|#@*S1D4NG";
 
@@ -179,6 +179,27 @@ export function HackerMarquee({
 }
 
 export function BiohazardWarningBar() {
+  const [clock, setClock] = useState("00:00:00");
+
+  useEffect(() => {
+    const target = new Date(event.countdownAt).getTime();
+
+    const tick = () => {
+      const diff = Math.max(0, target - Date.now());
+      const totalSec = Math.floor(diff / 1000);
+      const h = Math.floor(totalSec / 3600);
+      const m = Math.floor((totalSec % 3600) / 60);
+      const s = totalSec % 60;
+      const pad = (n: number) => String(n).padStart(2, "0");
+      // HH:MM:SS — hours may exceed 24 until target
+      setClock(`${pad(h)}:${pad(m)}:${pad(s)}`);
+    };
+
+    tick();
+    const id = window.setInterval(tick, 1000);
+    return () => window.clearInterval(id);
+  }, []);
+
   return (
     <div className="sticky top-0 z-50">
       <div className="hazard-stripes h-1.5 w-full sm:h-2" aria-hidden />
@@ -192,6 +213,12 @@ export function BiohazardWarningBar() {
         <div className="min-w-0 text-center">
           <p className="break-code font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-alert sm:text-[10px] sm:tracking-[0.22em] md:text-xs">
             <AnnoyText text={`${brand.code} · BIOHAZARD`} rate={260} />
+          </p>
+          <p
+            className="mt-0.5 font-mono text-[12px] font-bold tabular-nums tracking-[0.28em] text-paper sm:text-sm sm:tracking-[0.35em]"
+            aria-label="countdown"
+          >
+            {clock}
           </p>
         </div>
       </div>

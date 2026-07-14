@@ -12,6 +12,8 @@ export const event = {
   day: "Senin",
   date: "20 Juli 2026",
   time: "15:00 WIB",
+  /** countdown target: 20 Juli 2026 13:00 WIB (UTC+7) */
+  countdownAt: "2026-07-20T13:00:00+07:00",
   place: "Pendapa FMIPA Aja",
 } as const;
 
