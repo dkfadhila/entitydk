@@ -28,17 +28,17 @@ export const board = [
   {
     name: "Dr. R. Yosi Aprian Sari, M.Si.",
     role: "Ketua Penguji",
-    code: "FSK-01",
+    code: "RSC-01",
   },
   {
     name: "Dr. Laila Katriani, S.Si., M.Si.",
     role: "Sekretaris Penguji",
-    code: "FSK-02",
+    code: "RSC-02",
   },
   {
     name: "Denny Darmawan, S.Si., M.Sc.",
     role: "Penguji Utama",
-    code: "FSK-03",
+    code: "RSC-03",
   },
 ] as const;
 
@@ -64,7 +64,7 @@ export const hackerLines = [
   "BIOHAZARD SEAL · SHARP / NARCOTIC / WEIRD = BAN",
   "SUBJECT TIRTA · NIM 22306144046 · FISIKA S1",
   "THE WALLS ARE THE SAME WALLS",
-  "BOARD OF ENTITIES ONLINE · 3 LOCKED",
+  "BOARD OF RESEARCH ONLINE · 3 LOCKED",
   "IF YOU HEAR BUZZING IT IS WORKING",
   "PENDAPA IS A ROOM THAT FORGOT WINDOWS",
   "QUARANTINE v2 · 15:00 WIB · DON'T BE LATE TO NOWHERE",

@@ -161,11 +161,14 @@ export default function HomePage() {
         </Reveal>
 
         <Reveal className="mt-8 sm:mt-10">
-          <div className="grid gap-2.5 sm:gap-3">
-            {board.map((b, i) => (
-              <motion.div
-                key={b.code}
-                className="wet-panel flex flex-col gap-1 px-3 py-3.5 sm:px-4 sm:py-4 sm:flex-row sm:items-center sm:justify-between"
+                  <p className="mb-3 font-mono text-[10px] font-bold tracking-[0.28em] text-hazard sm:text-[11px]">
+                    BOARD OF RESEARCH
+                  </p>
+                  <div className="grid gap-2.5 sm:gap-3">
+                    {board.map((b, i) => (
+                      <motion.div
+                        key={b.code}
+                        className="wet-panel flex flex-col gap-1 px-3 py-3.5 sm:px-4 sm:py-4 sm:flex-row sm:items-center sm:justify-between"
                 initial={{ opacity: 0, x: -12 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, margin: "-10%" }}

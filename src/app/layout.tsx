@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "S1D4NG.5KR1P51.404",
     description:
-      "Zona liminal entity clearance. Board of Entities online. Subject: Decka Fadhila Tirta.",
+      "Zona liminal entity clearance. Board of Research online. Subject: Decka Fadhila Tirta.",
     type: "website",
     locale: "id_ID",
     siteName: "S1D4NG.5KR1P51.404",
