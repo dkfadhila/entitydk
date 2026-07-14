@@ -34,6 +34,10 @@ export const metadata: Metadata = {
   title: "S1D4NG.5KR1P51.404 · Undangan Sidang — Decka Fadhila Tirta",
   description:
     "Para Entitas: S1D4NG.5KR1P51.404 recovered dari BACKROOM://PENDAPA_FMIPA. Senin 20 Juli 2026 · 15:00 WIB. Quarantine protocol aktif.",
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/apple-icon.svg" }],
+  },
   openGraph: {
     title: "S1D4NG.5KR1P51.404 · Undangan Sidang — Decka Fadhila Tirta",
     description:

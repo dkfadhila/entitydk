@@ -97,22 +97,13 @@ export default function HomePage() {
         </Reveal>
 
         <Reveal delay={0.03}>
-          <div className="mb-5 flex flex-col gap-2 sm:mb-6 sm:flex-row sm:items-center">
+          <div className="mb-5">
             <Link
               href="/Evidence"
-              className="group inline-flex min-h-12 flex-1 items-center justify-center gap-2 border border-alert/60 bg-alert/10 px-4 py-3 font-mono text-xs font-bold tracking-[0.2em] text-alert transition hover:bg-alert/20 hover:text-paper active:scale-[0.99] sm:text-sm sm:tracking-[0.22em]"
+              className="group inline-flex min-h-12 w-full items-center justify-center gap-2 border border-alert/60 bg-alert/10 px-4 py-3 font-mono text-xs font-bold tracking-[0.22em] text-alert transition hover:bg-alert/20 hover:text-paper active:scale-[0.99] sm:text-sm sm:tracking-[0.24em]"
             >
               <span className="warn-flash">⚠</span>
               CEK EVIDENCE
-              <span className="text-[10px] font-normal tracking-[0.14em] text-fog group-hover:text-paper/80">
-                /Evidence · full skripsi
-              </span>
-            </Link>
-            <Link
-              href="/Evidence"
-              className="inline-flex min-h-12 items-center justify-center border border-backroom/40 bg-black/40 px-4 py-3 font-mono text-[10px] tracking-[0.18em] text-backroom transition hover:border-backroom hover:text-backroom-hot sm:min-w-[9rem]"
-            >
-              OPEN FILE →
             </Link>
           </div>
         </Reveal>
