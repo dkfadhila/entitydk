@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 
 export type EvidenceBlock =
   | { type: "title" | "h1" | "h2" | "h3" | "p" | "caption"; text: string; style?: string }
+  | { type: "li"; text: string; depth?: number }
   | { type: "image"; src: string; name: string; mime?: string; bytes?: number }
   | { type: "table"; rows: string[][] };
 
@@ -12,7 +13,6 @@ function cleanText(s: string) {
 }
 
 function isBibliographyLine(text: string) {
-  // rough APA-ish author year
   return /\(\d{4}\)/.test(text) || /^\S+,.+\d{4}/.test(text);
 }
 
@@ -25,7 +25,7 @@ export function EvidenceDoc({ blocks }: { blocks: EvidenceBlock[] }) {
     const b = blocks[i];
 
     if (b.type === "h1" && /DAFTAR PUSTAKA/i.test(b.text)) inPustaka = true;
-    if (b.type === "h1" && /LAMPIRAN/i.test(b.text) && !/^Lampiran\b/i.test(b.text)) inPustaka = false;
+    if (b.type === "h1" && /^LAMPIRAN$/i.test(b.text.trim())) inPustaka = false;
 
     if (b.type === "title") {
       nodes.push(
@@ -62,8 +62,8 @@ export function EvidenceDoc({ blocks }: { blocks: EvidenceBlock[] }) {
           id={`sec-${i}`}
           className={
             isLampiran
-              ? "evidence-h2 mt-8 scroll-mt-28 font-mono text-sm font-bold tracking-wide text-hazard sm:text-base"
-              : "evidence-h2 mt-8 scroll-mt-28 font-mono text-base font-bold tracking-wide text-fluorescent sm:text-lg"
+              ? "evidence-h2 mt-8 scroll-mt-28 font-mono text-sm font-semibold tracking-wide text-hazard sm:text-base"
+              : "evidence-h2 mt-8 scroll-mt-28 font-mono text-base font-semibold tracking-wide text-fluorescent sm:text-lg"
           }
         >
           {label}
@@ -77,7 +77,7 @@ export function EvidenceDoc({ blocks }: { blocks: EvidenceBlock[] }) {
         <h4
           key={i}
           id={`sec-${i}`}
-          className="evidence-h3 mt-6 scroll-mt-28 font-mono text-sm font-semibold text-backroom sm:text-[0.95rem]"
+          className="evidence-h3 mt-5 scroll-mt-28 border-l-2 border-backroom/50 pl-2.5 font-mono text-sm font-medium text-backroom-hot/90 sm:text-[0.95rem]"
         >
           {cleanText(b.text)}
         </h4>
@@ -97,6 +97,25 @@ export function EvidenceDoc({ blocks }: { blocks: EvidenceBlock[] }) {
       continue;
     }
 
+    if (b.type === "li") {
+      const depth = Math.min(b.depth ?? 0, 3);
+      const pad = ["pl-4", "pl-8", "pl-12", "pl-16"][depth];
+      const bullet =
+        depth === 0 ? "●" : depth === 1 ? "○" : depth === 2 ? "■" : "–";
+      nodes.push(
+        <div
+          key={i}
+          className={`evidence-li mt-2 flex gap-2.5 ${pad} font-mono text-[13px] leading-relaxed text-paper/90 sm:text-sm sm:leading-7`}
+        >
+          <span className="mt-[0.15em] shrink-0 text-[0.65em] text-backroom" aria-hidden>
+            {bullet}
+          </span>
+          <p className="evidence-p min-w-0 flex-1 text-justify">{cleanText(b.text)}</p>
+        </div>
+      );
+      continue;
+    }
+
     if (b.type === "p") {
       const text = cleanText(b.text);
       if (!text) continue;
@@ -106,7 +125,7 @@ export function EvidenceDoc({ blocks }: { blocks: EvidenceBlock[] }) {
           key={i}
           className={
             biblio
-              ? "evidence-biblio mt-2 pl-4 -indent-4 font-mono text-[12px] leading-relaxed text-paper/85 sm:text-[13px] sm:leading-7"
+              ? "evidence-biblio mt-2 pl-4 -indent-4 text-left font-mono text-[12px] leading-relaxed text-paper/85 sm:text-[13px] sm:leading-7"
               : "evidence-p mt-3 text-justify font-mono text-[13px] leading-relaxed text-paper/90 sm:text-sm sm:leading-7"
           }
         >
@@ -125,13 +144,15 @@ export function EvidenceDoc({ blocks }: { blocks: EvidenceBlock[] }) {
         b.mime.includes("jpg") ||
         b.mime.includes("gif") ||
         b.mime.includes("webp");
-      // next block caption?
       const next = blocks[i + 1];
       const nextCaption =
         next && next.type === "caption" ? cleanText(next.text) : null;
 
       nodes.push(
-        <figure key={i} className="evidence-figure my-7 overflow-hidden border border-backroom/30 bg-black/40">
+        <figure
+          key={i}
+          className="evidence-figure my-7 overflow-hidden border border-backroom/30 bg-black/40"
+        >
           <div className="hazard-stripes h-1 w-full opacity-70" />
           <div className="relative w-full bg-[#0c0d09] p-2 sm:p-3">
             {isRaster ? (
@@ -157,25 +178,28 @@ export function EvidenceDoc({ blocks }: { blocks: EvidenceBlock[] }) {
           )}
         </figure>
       );
-      // skip following caption block so it isn't duplicated under figure
-      if (nextCaption) {
-        i += 1;
-      }
+      if (nextCaption) i += 1;
       continue;
     }
 
     if (b.type === "table") {
       const rows = b.rows || [];
       if (!rows.length) continue;
-      // previous caption for table?
       nodes.push(
-        <div key={i} className="evidence-table my-6 overflow-x-auto border border-backroom/25 bg-black/30">
+        <div
+          key={i}
+          className="evidence-table my-6 overflow-x-auto border border-backroom/25 bg-black/30"
+        >
           <table className="min-w-full border-collapse font-mono text-[11px] text-paper sm:text-xs">
             <tbody>
               {rows.map((row, ri) => (
                 <tr
                   key={ri}
-                  className={ri === 0 ? "bg-backroom/10 font-semibold text-backroom-hot" : "odd:bg-white/[0.02]"}
+                  className={
+                    ri === 0
+                      ? "bg-backroom/10 font-semibold text-backroom-hot"
+                      : "odd:bg-white/[0.02]"
+                  }
                 >
                   {row.map((cell, ci) => (
                     <td
@@ -194,5 +218,5 @@ export function EvidenceDoc({ blocks }: { blocks: EvidenceBlock[] }) {
     }
   }
 
-  return <div className="evidence-doc space-y-0">{nodes}</div>;
+  return <div className="evidence-doc">{nodes}</div>;
 }

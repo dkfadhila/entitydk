@@ -10,7 +10,7 @@ import {
   SideTerminalCrawl,
 } from "@/components/HackerChrome";
 import { EvidenceDoc, type EvidenceBlock } from "@/components/EvidenceDoc";
-import { Reveal, SectionLabel } from "@/components/ui";
+import { Reveal } from "@/components/ui";
 import { brand, social, subject } from "@/lib/data";
 import evidence from "@/lib/evidence-content.json";
 import { motion, useScroll, useSpring } from "framer-motion";
@@ -163,7 +163,6 @@ export default function EvidencePage() {
         </div>
 
         <Reveal className="mt-8">
-          <SectionLabel code="INDEX">Peta file</SectionLabel>
           <div className="wet-panel p-3 sm:p-4">
             <ul className="grid gap-1.5 sm:grid-cols-2">
               {toc.map((item) => (
@@ -180,8 +179,7 @@ export default function EvidencePage() {
           </div>
         </Reveal>
 
-        <Reveal className="mt-8">
-          <SectionLabel code="PAYLOAD">Isi</SectionLabel>
+        <Reveal className="mt-6">
           <div className="wet-panel p-3 sm:p-5 md:p-6">
             <EvidenceDoc blocks={blocks} />
           </div>

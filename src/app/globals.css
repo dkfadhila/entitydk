@@ -598,13 +598,20 @@ body {
 .evidence-table table {
   width: 100%;
 }
+.evidence-p {
+  text-align: justify;
+  hyphens: auto;
+}
 @media (max-width: 767px) {
   .evidence-title {
     font-size: 1.2rem;
     line-height: 1.35;
   }
   .evidence-p {
-    text-align: left;
+    text-align: justify;
+  }
+  .evidence-li {
+    padding-left: 0.75rem;
   }
 }
 
