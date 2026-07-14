@@ -59,19 +59,47 @@ function FooterX() {
 
 export default function EvidencePage() {
   const blocks = evidence.blocks as EvidenceBlock[];
-  const toc = useMemo(
-    () =>
-      blocks
-        .map((b, i) => ({ b, i }))
-        .filter(({ b }) => b.type === "h1")
-        .map(({ b, i }) => ({
-          i,
-          text: "text" in b ? b.text.replace(/\t+/g, " ").trim() : `Section ${i}`,
-        }))
-        .filter((x) => x.text.length < 120)
-        .slice(0, 40),
-    [blocks]
-  );
+  const toc = useMemo(() => {
+    const preferred = [
+      "ABSTRAK",
+      "MOTTO",
+      "BAB I",
+      "BAB II",
+      "BAB III",
+      "BAB IV",
+      "BAB V",
+      "DAFTAR PUSTAKA",
+      "LAMPIRAN",
+    ];
+    const items: { i: number; text: string }[] = [];
+    blocks.forEach((b, i) => {
+      if (b.type !== "h1" && b.type !== "title") return;
+      const text = ("text" in b ? b.text : "").replace(/\t+/g, " ").trim();
+      if (!text || text.length > 100) return;
+      // skip raw lampiran item headings in TOC; keep only main LAMPIRAN
+      if (/^Lampiran\b/i.test(text) && !/^LAMPIRAN$/i.test(text)) return;
+      if (b.type === "title") {
+        items.push({ i, text: "JUDUL" });
+        return;
+      }
+      const up = text.toUpperCase();
+      if (
+        preferred.some((p) => up === p || up.startsWith(p + " ")) ||
+        up === "ABSTRAK" ||
+        up === "MOTTO"
+      ) {
+        items.push({ i, text });
+      }
+    });
+    // stable unique by label
+    const seen = new Set<string>();
+    return items.filter((x) => {
+      const k = x.text.toUpperCase();
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+  }, [blocks]);
 
   return (
     <div className="relative min-h-dvh backroom-wall force-motion">
@@ -103,9 +131,10 @@ export default function EvidencePage() {
 
         <Reveal>
           <p className="font-mono text-[9px] tracking-[0.28em] text-alert sm:text-[10px]">
-            FILE RECOVERED · FULL THESIS PAYLOAD
+            FILE RECOVERED · EVIDENCE
           </p>
-          <h1 className="glitch mt-1 break-code font-[family-name:var(--font-elite)] text-2xl leading-tight text-backroom-hot sm:text-3xl md:text-4xl"
+          <h1
+            className="glitch mt-1 break-code font-[family-name:var(--font-elite)] text-2xl leading-tight text-backroom-hot sm:text-3xl md:text-4xl"
             data-text="EVIDENCE"
           >
             EVIDENCE
@@ -113,14 +142,7 @@ export default function EvidencePage() {
           <p className="mt-2 font-mono text-xs uppercase tracking-[0.16em] text-fluorescent sm:text-sm">
             Skripsi · {subject.name}
           </p>
-          <p className="mt-3 break-code font-mono text-[12px] leading-relaxed text-fog sm:text-sm">
-            {evidence.meta.title}
-          </p>
-          <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
-            <div className="data-slab px-3 py-2">
-              <p className="font-mono text-[9px] text-backroom-dim">NIM</p>
-              <p className="font-mono text-xs text-paper">{evidence.meta.nim}</p>
-            </div>
+          <div className="mt-4 grid grid-cols-3 gap-2">
             <div className="data-slab px-3 py-2">
               <p className="font-mono text-[9px] text-backroom-dim">BLOCKS</p>
               <p className="font-mono text-xs text-paper">{evidence.meta.blockCount}</p>
@@ -142,13 +164,13 @@ export default function EvidencePage() {
 
         <Reveal className="mt-8">
           <SectionLabel code="INDEX">Peta file</SectionLabel>
-          <div className="wet-panel max-h-[280px] overflow-y-auto p-3 sm:p-4">
-            <ul className="space-y-1.5">
+          <div className="wet-panel p-3 sm:p-4">
+            <ul className="grid gap-1.5 sm:grid-cols-2">
               {toc.map((item) => (
                 <li key={item.i}>
                   <a
                     href={`#sec-${item.i}`}
-                    className="block break-code font-mono text-[11px] text-fog transition hover:text-backroom-hot sm:text-xs"
+                    className="block break-code border border-backroom/15 bg-black/20 px-3 py-2 font-mono text-[11px] text-fog transition hover:border-backroom/40 hover:text-backroom-hot sm:text-xs"
                   >
                     <span className="text-backroom-dim">//</span> {item.text}
                   </a>
@@ -159,12 +181,8 @@ export default function EvidencePage() {
         </Reveal>
 
         <Reveal className="mt-8">
-          <SectionLabel code="PAYLOAD">Isi lengkap</SectionLabel>
+          <SectionLabel code="PAYLOAD">Isi</SectionLabel>
           <div className="wet-panel p-3 sm:p-5 md:p-6">
-            <p className="mb-4 font-mono text-[11px] text-fog/80">
-              Para Entitas — ini seluruh berkas skripsi (teks, gambar, tabel, lampiran, daftar
-              pustaka) diekstrak berurutan dari file sumber.
-            </p>
             <EvidenceDoc blocks={blocks} />
           </div>
         </Reveal>

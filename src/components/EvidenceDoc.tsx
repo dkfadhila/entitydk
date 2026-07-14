@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 
 export type EvidenceBlock =
-  | { type: "h1" | "h2" | "h3" | "p" | "caption"; text: string; style?: string }
+  | { type: "title" | "h1" | "h2" | "h3" | "p" | "caption"; text: string; style?: string }
   | { type: "image"; src: string; name: string; mime?: string; bytes?: number }
   | { type: "table"; rows: string[][] };
 
@@ -17,7 +17,17 @@ export function EvidenceDoc({ blocks }: { blocks: EvidenceBlock[] }) {
 
   for (let i = 0; i < blocks.length; i++) {
     const b = blocks[i];
-    if (b.type === "h1") {
+    if (b.type === "title") {
+      nodes.push(
+        <h1
+          key={i}
+          id={`sec-${i}`}
+          className="evidence-title scroll-mt-28 text-center font-[family-name:var(--font-elite)] text-[1.35rem] leading-snug tracking-wide text-backroom-hot sm:text-2xl md:text-3xl"
+        >
+          {cleanText(b.text)}
+        </h1>
+      );
+    } else if (b.type === "h1") {
       nodes.push(
         <h2
           key={i}
