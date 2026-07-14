@@ -180,9 +180,6 @@ export default function EvidencePage() {
             <h2 className="mb-3 border-l-4 border-hazard pl-3 font-[family-name:var(--font-elite)] text-xl font-bold uppercase tracking-wide text-hazard sm:text-2xl">
               LAMPIRAN
             </h2>
-            <p className="mb-4 font-mono text-[12px] text-fog">
-              Lampiran dipisah ke menu sendiri biar Evidence utama gak kepanjangan.
-            </p>
             <div className="grid gap-2 sm:grid-cols-2">
               {lampiranList.map((item) => (
                 <Link
