@@ -9,10 +9,14 @@ import {
   PhantomWhispers,
   SideTerminalCrawl,
 } from "@/components/HackerChrome";
-import { EvidenceDoc, type EvidenceBlock } from "@/components/EvidenceDoc";
+import { EvidenceDoc } from "@/components/EvidenceDoc";
 import { Reveal } from "@/components/ui";
 import { brand, social, subject } from "@/lib/data";
-import evidence from "@/lib/evidence-content.json";
+import {
+  evidenceMainBlocks,
+  evidenceMeta,
+  lampiranList,
+} from "@/lib/evidence";
 import { motion, useScroll, useSpring } from "framer-motion";
 
 function ScrollProgress() {
@@ -50,7 +54,7 @@ function FooterX() {
           </a>
         </div>
         <p className="font-mono text-[10px] text-fog/50">
-          {brand.code} · EVIDENCE FILE · {evidence.meta.imageCount} FIGS
+          {brand.code} · EVIDENCE · {evidenceMeta.lampiranCount} LAMPIRAN
         </p>
       </div>
     </footer>
@@ -58,7 +62,7 @@ function FooterX() {
 }
 
 export default function EvidencePage() {
-  const blocks = evidence.blocks as EvidenceBlock[];
+  const blocks = evidenceMainBlocks;
   const toc = useMemo(() => {
     const preferred = [
       "ABSTRAK",
@@ -69,29 +73,21 @@ export default function EvidencePage() {
       "BAB IV",
       "BAB V",
       "DAFTAR PUSTAKA",
-      "LAMPIRAN",
     ];
     const items: { i: number; text: string }[] = [];
     blocks.forEach((b, i) => {
       if (b.type !== "h1" && b.type !== "title") return;
       const text = ("text" in b ? b.text : "").replace(/\t+/g, " ").trim();
       if (!text || text.length > 100) return;
-      // skip raw lampiran item headings in TOC; keep only main LAMPIRAN
-      if (/^Lampiran\b/i.test(text) && !/^LAMPIRAN$/i.test(text)) return;
       if (b.type === "title") {
         items.push({ i, text: "JUDUL" });
         return;
       }
       const up = text.toUpperCase();
-      if (
-        preferred.some((p) => up === p || up.startsWith(p + " ")) ||
-        up === "ABSTRAK" ||
-        up === "MOTTO"
-      ) {
+      if (preferred.some((p) => up === p || up.startsWith(p + " "))) {
         items.push({ i, text });
       }
     });
-    // stable unique by label
     const seen = new Set<string>();
     return items.filter((x) => {
       const k = x.text.toUpperCase();
@@ -142,20 +138,6 @@ export default function EvidencePage() {
           <p className="mt-2 font-mono text-xs uppercase tracking-[0.16em] text-fluorescent sm:text-sm">
             Skripsi · {subject.name}
           </p>
-          <div className="mt-4 grid grid-cols-3 gap-2">
-            <div className="data-slab px-3 py-2">
-              <p className="font-mono text-[9px] text-backroom-dim">BLOCKS</p>
-              <p className="font-mono text-xs text-paper">{evidence.meta.blockCount}</p>
-            </div>
-            <div className="data-slab px-3 py-2">
-              <p className="font-mono text-[9px] text-backroom-dim">FIGURES</p>
-              <p className="font-mono text-xs text-paper">{evidence.meta.imageCount}</p>
-            </div>
-            <div className="data-slab px-3 py-2">
-              <p className="font-mono text-[9px] text-backroom-dim">CHARS</p>
-              <p className="font-mono text-xs text-paper">{evidence.meta.textChars}</p>
-            </div>
-          </div>
         </Reveal>
 
         <div className="mt-4 max-md:-mx-4">
@@ -175,6 +157,14 @@ export default function EvidencePage() {
                   </a>
                 </li>
               ))}
+              <li>
+                <Link
+                  href="#lampiran-index"
+                  className="block break-code border border-hazard/30 bg-hazard/5 px-3 py-2 font-mono text-[11px] text-hazard transition hover:border-hazard/50 sm:text-xs"
+                >
+                  <span className="text-backroom-dim">//</span> LAMPIRAN MENU
+                </Link>
+              </li>
             </ul>
           </div>
         </Reveal>
@@ -182,6 +172,36 @@ export default function EvidencePage() {
         <Reveal className="mt-6">
           <div className="wet-panel p-3 sm:p-5 md:p-6">
             <EvidenceDoc blocks={blocks} />
+          </div>
+        </Reveal>
+
+        <Reveal className="mt-10">
+          <div id="lampiran-index" className="scroll-mt-28">
+            <h2 className="mb-3 border-l-4 border-hazard pl-3 font-[family-name:var(--font-elite)] text-xl font-bold uppercase tracking-wide text-hazard sm:text-2xl">
+              LAMPIRAN
+            </h2>
+            <p className="mb-4 font-mono text-[12px] text-fog">
+              Lampiran dipisah ke menu sendiri biar Evidence utama gak kepanjangan.
+            </p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {lampiranList.map((item) => (
+                <Link
+                  key={item.slug}
+                  href={item.href}
+                  className="group border border-backroom/25 bg-black/30 px-3 py-3 transition hover:border-hazard/50 hover:bg-hazard/5"
+                >
+                  <p className="font-mono text-[10px] tracking-[0.18em] text-hazard">
+                    LAMPIRAN {String(item.n).padStart(2, "0")}
+                  </p>
+                  <p className="mt-1 break-code font-mono text-[12px] leading-snug text-paper group-hover:text-backroom-hot sm:text-[13px]">
+                    {item.title.replace(/^Lampiran\s+\d+\.\s*/i, "")}
+                  </p>
+                  <p className="mt-2 font-mono text-[10px] text-backroom-dim">
+                    /Evidence/{item.slug} →
+                  </p>
+                </Link>
+              ))}
+            </div>
           </div>
         </Reveal>
 

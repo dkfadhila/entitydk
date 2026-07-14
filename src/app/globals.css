@@ -601,6 +601,23 @@ body {
 .evidence-p {
   text-align: justify;
   hyphens: auto;
+  text-indent: 1.75em;
+}
+.evidence-li .evidence-p {
+  text-indent: 0;
+}
+.evidence-biblio {
+  text-indent: 0 !important;
+  padding-left: 0 !important;
+  text-indent: 0;
+  margin-left: 0;
+}
+.evidence-title,
+.evidence-h1,
+.evidence-h2,
+.evidence-h3,
+.evidence-caption {
+  text-indent: 0 !important;
 }
 @media (max-width: 767px) {
   .evidence-title {
@@ -609,9 +626,13 @@ body {
   }
   .evidence-p {
     text-align: justify;
+    text-indent: 1.25em;
   }
   .evidence-li {
     padding-left: 0.75rem;
+  }
+  .evidence-li .evidence-p {
+    text-indent: 0;
   }
 }
 

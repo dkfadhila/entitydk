@@ -25,7 +25,7 @@ export function EvidenceDoc({ blocks }: { blocks: EvidenceBlock[] }) {
     const b = blocks[i];
 
     if (b.type === "h1" && /DAFTAR PUSTAKA/i.test(b.text)) inPustaka = true;
-    if (b.type === "h1" && /^LAMPIRAN$/i.test(b.text.trim())) inPustaka = false;
+    if (b.type === "h1" && /^LAMPIRAN/i.test(b.text.trim())) inPustaka = false;
 
     if (b.type === "title") {
       nodes.push(
@@ -54,19 +54,13 @@ export function EvidenceDoc({ blocks }: { blocks: EvidenceBlock[] }) {
     }
 
     if (b.type === "h2") {
-      const label = cleanText(b.text);
-      const isLampiran = /^Lampiran\b/i.test(label);
       nodes.push(
         <h3
           key={i}
           id={`sec-${i}`}
-          className={
-            isLampiran
-              ? "evidence-h2 mt-8 scroll-mt-28 font-mono text-sm font-semibold tracking-wide text-hazard sm:text-base"
-              : "evidence-h2 mt-8 scroll-mt-28 font-mono text-base font-semibold tracking-wide text-fluorescent sm:text-lg"
-          }
+          className="evidence-h2 mt-8 scroll-mt-28 font-mono text-base font-semibold tracking-wide text-fluorescent sm:text-lg"
         >
-          {label}
+          {cleanText(b.text)}
         </h3>
       );
       continue;
@@ -100,8 +94,7 @@ export function EvidenceDoc({ blocks }: { blocks: EvidenceBlock[] }) {
     if (b.type === "li") {
       const depth = Math.min(b.depth ?? 0, 3);
       const pad = ["pl-4", "pl-8", "pl-12", "pl-16"][depth];
-      const bullet =
-        depth === 0 ? "●" : depth === 1 ? "○" : depth === 2 ? "■" : "–";
+      const bullet = depth === 0 ? "●" : depth === 1 ? "○" : depth === 2 ? "■" : "–";
       nodes.push(
         <div
           key={i}
@@ -125,7 +118,7 @@ export function EvidenceDoc({ blocks }: { blocks: EvidenceBlock[] }) {
           key={i}
           className={
             biblio
-              ? "evidence-biblio mt-2 pl-4 -indent-4 text-left font-mono text-[12px] leading-relaxed text-paper/85 sm:text-[13px] sm:leading-7"
+              ? "evidence-biblio mt-2 text-left font-mono text-[12px] leading-relaxed text-paper/85 sm:text-[13px] sm:leading-7"
               : "evidence-p mt-3 text-justify font-mono text-[13px] leading-relaxed text-paper/90 sm:text-sm sm:leading-7"
           }
         >
