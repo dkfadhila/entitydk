@@ -12,7 +12,7 @@ import {
 } from "@/components/HackerChrome";
 import { CorridorStage } from "@/components/CorridorStage";
 import { PortraitSprite } from "@/components/PortraitSprite";
-import { DataRow, Reveal, SectionLabel } from "@/components/ui";
+import { DataRow, Reveal } from "@/components/ui";
 import { motion, useScroll, useSpring } from "framer-motion";
 
 function ScrollProgress() {
@@ -114,7 +114,6 @@ export default function HomePage() {
         </div>
 
         <Reveal className="mt-8 sm:mt-10" delay={0.08}>
-          <SectionLabel code="BROADCAST">Para Entitas</SectionLabel>
           <div className="wet-panel p-4 sm:p-5 md:p-6">
             <p className="font-mono text-[13px] leading-relaxed text-fog sm:text-sm md:text-[15px]">
               Para Entitas.
@@ -130,7 +129,6 @@ export default function HomePage() {
         </Reveal>
 
         <Reveal className="mt-8 sm:mt-10" delay={0.05}>
-          <SectionLabel code="EVENT CORE">Jadwal Zona</SectionLabel>
           <div className="grid grid-cols-1 gap-2.5 xs:gap-3 sm:grid-cols-2">
             <DataRow label="Hari" value={event.day} />
             <DataRow label="Tanggal" value={event.date} />
@@ -140,7 +138,6 @@ export default function HomePage() {
         </Reveal>
 
         <Reveal className="mt-8 sm:mt-10">
-          <SectionLabel code="SUBJECT FILE">Target Entitas</SectionLabel>
           <div className="wet-panel grid gap-5 p-3 sm:gap-6 sm:p-4 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] md:p-6">
             <div className="relative mx-auto flex w-full max-w-[300px] flex-col items-center md:max-w-[280px]">
               <PortraitSprite intervalMs={2000} className="h-[min(62vh,540px)] sm:h-[min(58vh,520px)]" />
@@ -164,7 +161,6 @@ export default function HomePage() {
         </Reveal>
 
         <Reveal className="mt-8 sm:mt-10">
-          <SectionLabel code="BOARD OF ENTITIES">Penguji</SectionLabel>
           <div className="grid gap-2.5 sm:gap-3">
             {board.map((b, i) => (
               <motion.div
@@ -190,7 +186,6 @@ export default function HomePage() {
         </Reveal>
 
         <Reveal className="mt-8 sm:mt-10">
-          <SectionLabel code="THESIS PAYLOAD">Judul Skripsi</SectionLabel>
           <div className="wet-panel border-l-4 border-l-bio p-4 terminal-pulse sm:p-5">
             <p className="break-code font-mono text-[10px] uppercase leading-relaxed tracking-wide text-fluorescent sm:text-[11px] md:text-sm">
               {subject.title}
@@ -199,7 +194,6 @@ export default function HomePage() {
         </Reveal>
 
         <Reveal className="mt-8 sm:mt-10">
-          <SectionLabel code="QUARANTINE PROTOCOL">Wajib dibaca</SectionLabel>
           <div className="overflow-hidden border border-alert/40 bg-[#140808]/90">
             <div className="hazard-stripes h-2 w-full" />
             <div className="p-4 sm:p-5 md:p-6">
