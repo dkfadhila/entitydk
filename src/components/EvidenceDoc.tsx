@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 export type EvidenceBlock =
   | { type: "title" | "h1" | "h2" | "h3" | "p" | "caption"; text: string; style?: string }
   | { type: "li"; text: string; depth?: number }
+  | { type: "equation"; label?: string; formula: string; text?: string }
   | { type: "image"; src: string; name: string; mime?: string; bytes?: number }
   | { type: "table"; rows: string[][] };
 
@@ -87,6 +88,23 @@ export function EvidenceDoc({ blocks }: { blocks: EvidenceBlock[] }) {
         >
           {cleanText(b.text)}
         </p>
+      );
+      continue;
+    }
+
+    if (b.type === "equation") {
+      nodes.push(
+        <div
+          key={i}
+          className="evidence-equation my-5 flex items-center justify-center gap-4 border border-backroom/30 bg-black/40 px-4 py-4"
+        >
+          {b.label ? (
+            <span className="font-mono text-sm font-semibold text-hazard">{b.label}</span>
+          ) : null}
+          <code className="font-mono text-base font-semibold tracking-wide text-backroom-hot sm:text-lg">
+            {b.formula}
+          </code>
+        </div>
       );
       continue;
     }

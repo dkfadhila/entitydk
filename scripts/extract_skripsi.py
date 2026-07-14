@@ -16,6 +16,127 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "scripts" / "skripsi.docx"
 OUT_DIR = ROOT / "public" / "evidence" / "images"
 OUT_JSON = ROOT / "src" / "lib" / "evidence-content.json"
+OUT_SPLIT = ROOT / "src" / "lib" / "evidence-split.json"
+
+M_NS = {"m": "http://schemas.openxmlformats.org/officeDocument/2006/math"}
+
+
+def _local(tag: str) -> str:
+    return tag.split("}")[-1] if "}" in tag else tag
+
+
+def math_to_text(el) -> str:
+    """OMML → readable formula text (fractions, subscripts, sums)."""
+    tag = _local(el.tag)
+    if tag == "t":
+        return el.text or ""
+    if tag == "f":
+        num = el.find("m:num", M_NS)
+        den = el.find("m:den", M_NS)
+        return f"{math_walk(num)}/{math_walk(den)}"
+    if tag == "sSub":
+        e = el.find("m:e", M_NS)
+        sub = el.find("m:sub", M_NS)
+        return f"{math_walk(e)}_{math_walk(sub)}"
+    if tag == "sSup":
+        e = el.find("m:e", M_NS)
+        sup = el.find("m:sup", M_NS)
+        return f"{math_walk(e)}^{math_walk(sup)}"
+    if tag == "sSubSup":
+        e = el.find("m:e", M_NS)
+        sub = el.find("m:sub", M_NS)
+        sup = el.find("m:sup", M_NS)
+        return f"{math_walk(e)}_{math_walk(sub)}^{math_walk(sup)}"
+    if tag == "rad":
+        e = el.find("m:e", M_NS)
+        return f"√({math_walk(e)})"
+    if tag == "nary":
+        e = el.find("m:e", M_NS)
+        sub = el.find("m:sub", M_NS)
+        sup = el.find("m:sup", M_NS)
+        chr_el = el.find(".//m:chr", M_NS)
+        ch = chr_el.get(qn("m:val")) if chr_el is not None else "Σ"
+        body = math_walk(e)
+        lo = math_walk(sub)
+        hi = math_walk(sup)
+        if lo or hi:
+            return f"{ch}({lo}→{hi}){body}"
+        return f"{ch}{body}"
+    if tag == "d":
+        e = el.find("m:e", M_NS)
+        return f"({math_walk(e)})"
+    return math_walk(el)
+
+
+def math_walk(el) -> str:
+    if el is None:
+        return ""
+    parts: list[str] = []
+    if el.text:
+        parts.append(el.text)
+    for c in el:
+        parts.append(math_to_text(c))
+        if c.tail:
+            parts.append(c.tail)
+    return "".join(parts)
+
+
+def table_as_equation(child) -> dict | None:
+    """Detect equation tables like (i) I=P/t or (ii) x=Σx_i/n."""
+    maths = child.findall(".//m:oMath", M_NS)
+    if not maths:
+        return None
+    label_parts = [
+        t.text or ""
+        for t in child.findall(".//{http://schemas.openxmlformats.org/wordprocessingml/2006/main}t")
+    ]
+    label = "".join(label_parts).strip()
+    # skip degree-only or junk
+    formulas = []
+    for m in maths:
+        f = math_to_text(m).replace(" ", "")
+        if f and f not in ("°",):
+            formulas.append(f)
+    if not formulas:
+        return None
+    # only treat as equation if label looks like (i)/(ii) or formulas look equation-like
+    if re.match(r"^\([ivx]+\)$", label, re.I) or any("=" in f or "/" in f for f in formulas):
+        formula = formulas[0]
+        # pretty spaces around =
+        formula = re.sub(r"\s*=\s*", " = ", formula)
+        formula = re.sub(r"/", " / ", formula)
+        return {
+            "type": "equation",
+            "label": label if re.match(r"^\([ivx]+\)$", label, re.I) else "",
+            "formula": formula,
+            "text": f"{label}  {formula}".strip() if label else formula,
+        }
+    return None
+
+
+def para_full_text(paragraph: Paragraph) -> str:
+    """Paragraph text including inline OMML math runs."""
+    parts: list[str] = []
+    for child in paragraph._element:
+        tag = _local(child.tag)
+        if tag == "r":
+            for t in child.findall(
+                ".//{http://schemas.openxmlformats.org/wordprocessingml/2006/main}t"
+            ):
+                if t.text:
+                    parts.append(t.text)
+        elif tag == "oMath":
+            parts.append(math_to_text(child))
+        elif tag == "oMathPara":
+            for m in child.findall("m:oMath", M_NS):
+                parts.append(math_to_text(m))
+        elif tag == "hyperlink":
+            for t in child.findall(
+                ".//{http://schemas.openxmlformats.org/wordprocessingml/2006/main}t"
+            ):
+                if t.text:
+                    parts.append(t.text)
+    return re.sub(r"\s+", " ", "".join(parts)).strip()
 
 
 def save_image(part: ImagePart, saved: dict, counter: list[int]):
@@ -144,7 +265,7 @@ def main():
     for child in body.iterchildren():
         if child.tag == qn("w:p"):
             p = Paragraph(child, doc)
-            text = p.text.replace("\u00a0", " ").strip()
+            text = para_full_text(p) or p.text.replace("\u00a0", " ").strip()
             images = para_images(p, img_map, saved, counter)
             style = style_name(p)
             ilvl, numId, left = list_info(p)
@@ -195,6 +316,10 @@ def main():
                 raw.append({"type": "image", **im})
 
         elif child.tag == qn("w:tbl"):
+            eq = table_as_equation(child)
+            if eq:
+                raw.append(eq)
+                continue
             table = Table(child, doc)
             rows = []
             for row in table.rows:
@@ -361,14 +486,105 @@ def main():
         "uniqueImages": len(saved),
         "textChars": sum(len(b.get("text", "")) for b in final),
         "listItems": sum(1 for b in final if b.get("type") == "li"),
+        "equations": sum(1 for b in final if b.get("type") == "equation"),
         "filtered": True,
     }
     OUT_JSON.write_text(json.dumps({"meta": meta, "blocks": final}, ensure_ascii=False), encoding="utf-8")
+
+    # ---------- SPLIT lampiran routes ----------
+    lamp_i = next(
+        (
+            i
+            for i, b in enumerate(final)
+            if b.get("type") == "h1" and re.fullmatch(r"LAMPIRAN", tx(b), re.I)
+        ),
+        None,
+    )
+    main = final[:lamp_i] if lamp_i is not None else final
+    tail = final[lamp_i + 1 :] if lamp_i is not None else []
+    items = []
+    cur = None
+    for b in tail:
+        t = tx(b)
+        is_head = b.get("type") in ("h2", "h1", "p") and re.match(r"^Lampiran\b", t, re.I)
+        if is_head:
+            if cur:
+                items.append(cur)
+            cur = {"title": t, "blocks": [{"type": "h1", "text": t}]}
+        else:
+            if cur is None:
+                continue
+            cur["blocks"].append(b)
+    if cur:
+        items.append(cur)
+
+    for n, it in enumerate(items, 1):
+        raw_title = it["title"]
+        m = re.match(r"^Lampiran\s*([0-9]*)\s*\.?\s*(.*)$", raw_title, re.I)
+        rest = (m.group(2) if m else raw_title).strip(" .")
+        rest = re.sub(r"^Lampiran\s*", "", rest, flags=re.I).strip()
+        title = f"Lampiran {n}. {rest}".strip()
+        it["n"] = n
+        it["slug"] = f"lampiran{n}"
+        it["title"] = title
+        it["blocks"][0] = {"type": "h1", "text": title}
+
+    split = {
+        "meta": {
+            **meta,
+            "mainBlockCount": len(main),
+            "lampiranCount": len(items),
+        },
+        "main": main,
+        "lampiran": [
+            {
+                "n": it["n"],
+                "slug": it["slug"],
+                "title": it["title"],
+                "href": f"/Evidence/{it['slug']}",
+                "blockCount": len(it["blocks"]),
+                "blocks": it["blocks"],
+            }
+            for it in items
+        ],
+    }
+    OUT_SPLIT.write_text(json.dumps(split, ensure_ascii=False), encoding="utf-8")
+
+    # promote short list items → h3 (subtitle under section)
+    def promote_lists(blocks: list) -> list:
+        out = []
+        for b in blocks:
+            if b.get("type") == "li":
+                t = re.sub(r"\s+", " ", (b.get("text") or "")).strip()
+                if len(t) <= 70 and not t.endswith(".") and not t.endswith("?"):
+                    out.append({"type": "h3", "text": t})
+                else:
+                    out.append({"type": "li", "text": t, "depth": int(b.get("depth") or 0)})
+            else:
+                out.append(b)
+        return out
+
+    split["main"] = promote_lists(split["main"])
+    for it in split["lampiran"]:
+        it["blocks"] = promote_lists(it["blocks"])
+        it["blockCount"] = len(it["blocks"])
+    split["meta"]["mainBlockCount"] = len(split["main"])
+    OUT_SPLIT.write_text(json.dumps(split, ensure_ascii=False), encoding="utf-8")
+    OUT_JSON.write_text(
+        json.dumps({"meta": meta, "blocks": promote_lists(final)}, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
     print(json.dumps(meta, indent=2, ensure_ascii=False))
+    print("equations", [b for b in final if b.get("type") == "equation"])
+    print("lampiran", len(items))
     print("sample hierarchy:")
-    for i, b in enumerate(final[:35]):
-        print(i, b["type"], (b.get("text") or b.get("name", ""))[:90], "depth" if b.get("type") == "li" else "", b.get("depth", ""))
-    print("li depths", {d: sum(1 for b in final if b.get("type")=="li" and b.get("depth")==d) for d in range(0,4)})
+    for i, b in enumerate(final[:40]):
+        print(
+            i,
+            b["type"],
+            (b.get("text") or b.get("name") or b.get("formula") or "")[:90],
+        )
 
 
 if __name__ == "__main__":

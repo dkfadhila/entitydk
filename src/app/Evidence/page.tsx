@@ -160,9 +160,9 @@ export default function EvidencePage() {
               <li>
                 <Link
                   href="#lampiran-index"
-                  className="block break-code border border-hazard/30 bg-hazard/5 px-3 py-2 font-mono text-[11px] text-hazard transition hover:border-hazard/50 sm:text-xs"
+                  className="block break-code border border-backroom/15 bg-black/20 px-3 py-2 font-mono text-[11px] text-fog transition hover:border-backroom/40 hover:text-backroom-hot sm:text-xs"
                 >
-                  <span className="text-backroom-dim">//</span> LAMPIRAN MENU
+                  <span className="text-backroom-dim">//</span> LAMPIRAN
                 </Link>
               </li>
             </ul>
