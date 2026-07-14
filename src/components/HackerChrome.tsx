@@ -193,9 +193,6 @@ export function BiohazardWarningBar() {
           <p className="break-code font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-alert sm:text-[10px] sm:tracking-[0.22em] md:text-xs">
             <AnnoyText text={`${brand.code} · BIOHAZARD`} rate={260} />
           </p>
-          <p className="mt-0.5 font-mono text-[8px] uppercase leading-snug tracking-[0.1em] text-paper/90 sm:text-[9px] sm:tracking-[0.14em] md:text-[10px]">
-            dilarang senjata tajam · narkoba · barang terlarang &amp; aneh
-          </p>
         </div>
       </div>
       <div className="max-md:text-[10px]">

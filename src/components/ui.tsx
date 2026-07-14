@@ -35,16 +35,18 @@ export function SectionLabel({
   children,
 }: {
   code: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }) {
   return (
     <div className="mb-3 flex flex-wrap items-center gap-2 sm:mb-4 sm:gap-3">
       <span className="rounded border border-backroom/40 bg-backroom/10 px-2 py-0.5 font-mono text-[9px] tracking-[0.2em] text-backroom sm:text-[10px] sm:tracking-[0.25em]">
         {code}
       </span>
-      <h2 className="font-[family-name:var(--font-elite)] text-base tracking-wide text-fluorescent sm:text-lg md:text-xl">
-        {children}
-      </h2>
+      {children ? (
+        <h2 className="font-[family-name:var(--font-elite)] text-base tracking-wide text-fluorescent sm:text-lg md:text-xl">
+          {children}
+        </h2>
+      ) : null}
     </div>
   );
 }
