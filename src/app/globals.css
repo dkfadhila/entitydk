@@ -568,6 +568,11 @@ body {
 }
 
 /* safe bottom for home indicator */
+/* safe bottom for home indicator */
+.safe-bottom {
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
+}
+
 /* Evidence typography */
 .evidence-doc {
   color: var(--paper);
