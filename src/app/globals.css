@@ -568,8 +568,40 @@ body {
 }
 
 /* safe bottom for home indicator */
-.safe-bottom {
-  padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
+/* Evidence typography */
+.evidence-doc {
+  color: var(--paper);
 }
+.evidence-title {
+  text-wrap: balance;
+}
+.evidence-h1 {
+  text-wrap: balance;
+}
+.evidence-h2 {
+  text-wrap: pretty;
+}
+.evidence-caption {
+  text-wrap: pretty;
+}
+.evidence-biblio {
+  hyphens: auto;
+}
+.evidence-figure figcaption {
+  background: rgba(0, 0, 0, 0.35);
+}
+.evidence-table table {
+  width: 100%;
+}
+@media (max-width: 767px) {
+  .evidence-title {
+    font-size: 1.2rem;
+    line-height: 1.35;
+  }
+  .evidence-p {
+    text-align: left;
+  }
+}
+
 
 
