@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, Share_Tech_Mono, Special_Elite } from "next/font/google";
+import { CopyGuard } from "@/components/CopyGuard";
 import "./globals.css";
 
 const share = Share_Tech_Mono({
@@ -73,7 +74,10 @@ export default function RootLayout({
       lang="id"
       className={`${share.variable} ${plex.variable} ${elite.variable} h-full`}
     >
-      <body className="min-h-full min-h-dvh bg-void text-paper antialiased">{children}</body>
+      <body className="min-h-full min-h-dvh bg-void text-paper antialiased">
+        <CopyGuard />
+        {children}
+      </body>
     </html>
   );
 }

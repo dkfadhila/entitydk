@@ -71,8 +71,20 @@ body {
 }
 
 ::selection {
-  background: var(--backroom);
+  background: var(--alert);
   color: #000;
+}
+
+/* anti-copy: disable selection site-wide (CopyGuard enforces + jumpscare) */
+html, body, * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+/* allow selection nowhere; keep cursor default-ish */
+body {
+  cursor: default;
 }
 
 /* ===== BACKROOM WALL ===== */
